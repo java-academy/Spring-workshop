@@ -1,19 +1,112 @@
-= Spring Core + Boot + MVC - warsztaty
 :authors: Kamil Jankowski, Michał Jędrzejkiewicz, Hubert Milczarek
+:source-highlighter: rouge
+= Spring Core + Boot + MVC - warsztaty
 
-== Zadanie 1. Tworzenie aplikacji Spring Boot
+== Wprowadzenie teoretyczne
+
+=== Spring
+
+Spring jest narzędziem usprawniającym tworzenie aplikacji w języku Java. Autorem jest Rod Johnson - australijski informatyk i muzykolog - który w październiku 2002 roku, przedstawił pierwszą wersję biblioteki w swojej książce pod tytułem: __Expert One-on-One J2EE Design and Development__. Głównym celem Springa było wyeliminowanie w jak największym stopniu konfiguracji środowiska, tak aby programista mógł się skupić wyłącznie na budowaniu.
+
+==== Odwrócenie zależności - IoC - Inversion of Control
+
+Jedną z najważniejszych funkcjonalności Springa jest mechanizm odwrócenia zależności. W wielkim skrócie, jest to kontrola nad składowymi obiektami danego programu. W tradycyjnym modelu programowania, napisany przez osobę kod używa funkcji biblioteki przez co to program ma kontrolę nad konkretnym narzędziem. Wykorzystując odwrócenie zależności, to biblioteka kieruje przepływem programu. Najważniejszymi zaletami są:
+
+* oddzielenie implementacji od wykonywanego zadania
+* uproszczona zmiana implementacji
+* lepsza modularność - tworzenie małych niezależnych od siebie funkcjonalności
+* łatwiejsze testowanie
+
+==== Wstrzykiwanie zależności
+
+Wstrzykiwanie zależności jest to jedna z możliwych implementacji odwrócenia zależności. W wielkim skrócie to wzorzec projektowy mający na celu automatyczne umieszczanie obiektów do klas np. za pomocą konstruktora.
+
+==== Kontekst aplikacji - Application Context / Spring IoC Container
+
+Aby móc wstrzykiwać obiekty do klas, należy je gdzieś utworzyć i mieć do nich dostęp. Z pomocą przychodzi __Spring IoC Container__, który jest popularnie wykorzysywany w implementacjach odwrócenia zależności. W springu nazywany jest również kontekstem aplikacji (ang. __Application Context__).
+
+==== Ziarno - Bean
+Pojedynczy element __Spring IoC Container__ nazywamy ziarnem (ang. __bean__). Ziarna możemy konfigurować poprzez pliki XML lub bezpośrednio w kodzie Javy. Poniższe dwa przykłady obrazują oba wymienione sposoby.
+
+[source,xml]
+.Przykład konfiguracji XML
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:util="http://www.springframework.org/schema/util" xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate"/>
+</beans>
+----
+
+==== Podstawowe adnotacje zwiazane ze wstrzykiwaniem zależności
+W Springu możemy tworzyć i wstrzykiwać obiekty posługując się następującymi adnotacjami:
+
+* @Bean - używane na metodach. Tworzy ziarno za pomocą oznaczonej metody.
+* @Autowired - używana na metodach, polach lub konstruktorach. Informuje, że w tym miejscu powinny zostać wstrzyknięte zależności.
+* @Component - używane na klasie. Aby skorzystać z mechanizmu wstrzykiwania, należy oznaczyć klasę która ma korzystać z niego.
+* @Configuration - używane na klasie. Oznacza klasę, która definiuje ziarna.
+
+[source,java]
+.Stworzenie ziarna poprzez użycie Javy i Springa
+----
+package com.ships;
+
+@Configuration
+class AppConfig {
+    @Bean
+    RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+}
+----
+
+[source,java]
+.Użycie ziarna w kodzie poprzez wstrzykniecie w konstruktor
+----
+package com.ships;
+
+@Component
+class ServiceConnector {
+
+    private final RestTemplate restTemplate;
+
+    @Autowired
+    ServiceConnector(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+}
+----
+
+=== Spring Boot
+
+Minusem springa jest skomplikowana konfiguracja do uruchomienia aplikacji. Na rynku pojawiały sie coraz to nowe technologie zawierające w sobie wstrzykiwanie zależności. Wten programiści zaczęli pytać: "Po co nam spring skoro są inne przyjemniejsze i gotowe narzędzia?". Spring musiał sprostać wymaganiom aktualnego rynku i stworzył Spring Boot, bibliotekę która wymaga jedynie minimalnych ustawień Springa aby uruchomić aplikację. Oprócz tego oferuje:
+
+* Wbudowany Tomcat, Jetty czy Undertow
+* Automatycznie konfiguruje Springa oraz inne biblioteki (o ile jest to możliwe)
+* Oferuje przydatne funkcje takie jak: metryki czy monitor kondycji
+* Zrezygnowanie z konfiguracji oraz generacji kodu z XMLa
+* Posiada przydatne wtyczki związane z bazami danych w pamięci
+* Mniejsza ilość kodu aby osiągnąć tą samą funkcjonalność w Springu
+
+== Część praktyczna
+
+=== Zadanie 1. Tworzenie aplikacji Spring Boot
 . Utwórzcie nowy projekt springowy wykorzystując https://start.spring.io[Spring Initializr]
 . Nazwijcie projekt `spring_workshop`, żeby nazwa była zgodna z nazwą projektu na gitlabie.
 Co do samej ścieżki pakietów, możecie ją nazwać dowolnie.
 . Skopiujcie wygenerowane pliki do do pobranego https://gitlab.com/choooobert/Spring-workshop[repozytorium].
 . Usuńcie niepotrzebne pliki związane z wrapperem mavena (w projekcie nie będziemy z nich korzystać).
 
-== Zadanie 2. Tworzenie prostego kontrolera
+=== Zadanie 2. Tworzenie prostego kontrolera
 . Utwórzcie pakiet `ships` wewnątrz głównego pakietu projektu.
 . Dodajcie klasę `WelcomeController`.
 . Dodajcie w niej metodę która dla scieżki __"/"__ zwróci napis __"Welcome to ships backend"__.
 
-== Zadanie 3. Dodanie serwisu statków
+=== Zadanie 3. Dodanie serwisu statków
 . W pakiecie `ships`, dodajcie klasę `Ship` tak żeby korespondowała z tym co jest w `Angular-workshop`.
 . Używając adnotacji projektu __Lombok__ sprawcie, aby obiekty klasy były niezmienialne po utworzeniu,
 oraz żeby klasa miała gettery dla wszystkich swoich pól.
@@ -24,7 +117,7 @@ oraz żeby klasa miała gettery dla wszystkich swoich pól.
        Powinna także rzucić odpowiedni wyjątek, jeśli statek o podanen nazwei jest już w serwisie.
     ** Metoda usuwająca statek powinna rzucać wyjątkiem gdy chcemy usunąć statek którego nie ma `ShipService`.
 
-== Zadanie 4. Dodanie kontrolera statków
+=== Zadanie 4. Dodanie kontrolera statków
 . Utwórzcie klasę `ShipsController`.
 . Oznaczcie klasę jako kontroler REST-owy zwracający dane w formacie __JSON__.
 . Używając wstrzykiwania zależnosci, dodajcie do niej instancję `ShipsService`.
@@ -35,11 +128,11 @@ Jeżeli statek o danej nazwie już istnieje, Metoda zwraca odpowiedni kod błęd
   * **DELETE** __/ships/{nazwa statku}__  która usunie dany staek z serwisu.
 W przypadku gdy danego statku nie ma w serwisie, metoda powinna zwrócić odpowiedni kod błędu.
 
-== Zadanie 5. Synchronizacja backendu z frontendem
+=== Zadanie 5. Synchronizacja backendu z frontendem
 . W repo `Angular-workshop` usuncie `InMemoryDataService`
 . Dodajcie odpowiedni URL do backendu.
 . Sprawdźcie czy obsługa REST-ów we frontendzie jest zgodna z tym co przed chwilą napisaliście w `Spring-workshop`.
 . Do klasy `ShipsController` dodajecie adnotacje `@CrossOrigin("http://localhost:4200")`, aby backend mógł przetwarzać żadania z tego adresu.
 
-== Zadanie 6*. Testy dla REST API backendu
+=== Zadanie 6*. Testy dla REST API backendu
 . Używając `MockMvc` napiszcie testy dla metod obsługujących żadania REST-owe.
