@@ -1,0 +1,45 @@
+= Spring Core + Boot + MVC - warsztaty
+:authors: Kamil Jankowski, Michał Jędrzejkiewicz, Hubert Milczarek
+
+== Zadanie 1. Tworzenie aplikacji Spring Boot
+. Utwórzcie nowy projekt springowy wykorzystując https://start.spring.io[Spring Initializr]
+. Nazwijcie projekt `spring_workshop`, żeby nazwa była zgodna z nazwą projektu na gitlabie.
+Co do samej ścieżki pakietów, możecie ją nazwać dowolnie.
+. Skopiujcie wygenerowane pliki do do pobranego https://gitlab.com/choooobert/Spring-workshop[repozytorium].
+. Usuńcie niepotrzebne pliki związane z wrapperem mavena (w projekcie nie będziemy z nich korzystać).
+
+== Zadanie 2. Tworzenie prostego kontrolera
+. Utwórzcie pakiet `ships` wewnątrz głównego pakietu projektu.
+. Dodajcie klasę `WelcomeController`.
+. Dodajcie w niej metodę która dla scieżki __"/"__ zwróci napis __"Welcome to ships backend"__.
+
+== Zadanie 3. Dodanie serwisu statków
+. W pakiecie `ships`, dodajcie klasę `Ship` tak żeby korespondowała z tym co jest w `Angular-workshop`.
+. Używając adnotacji projektu __Lombok__ sprawcie, aby obiekty klasy były niezmienialne po utworzeniu,
+oraz żeby klasa miała gettery dla wszystkich swoich pól.
+. Dodajcie klasę `ShipsService` a w niej:
+  * odpowiednią strukturę do przechowywania statków,
+  * metody do usuwania konkretnego statku, dodawania nowego statku (na podstawie nazwy statku), pobierania listy statków
+    ** Metoda dodająca statek powinna generować jego `id`.
+       Powinna także rzucić odpowiedni wyjątek, jeśli statek o podanen nazwei jest już w serwisie.
+    ** Metoda usuwająca statek powinna rzucać wyjątkiem gdy chcemy usunąć statek którego nie ma `ShipService`.
+
+== Zadanie 4. Dodanie kontrolera statków
+. Utwórzcie klasę `ShipsController`.
+. Oznaczcie klasę jako kontroler REST-owy zwracający dane w formacie __JSON__.
+. Używając wstrzykiwania zależnosci, dodajcie do niej instancję `ShipsService`.
+. Utwórzcie niej metody obsługujące następujace żadania RESTowe:
+  * **GET** __/ships__ zwraca listę statków
+  * **POST** __/ships/{nazwa statku}__ dodaje nowy statek i generuje dla niego ID.
+Jeżeli statek o danej nazwie już istnieje, Metoda zwraca odpowiedni kod błędu.
+  * **DELETE** __/ships/{nazwa statku}__  która usunie dany staek z serwisu.
+W przypadku gdy danego statku nie ma w serwisie, metoda powinna zwrócić odpowiedni kod błędu.
+
+== Zadanie 5. Synchronizacja backendu z frontendem
+. W repo `Angular-workshop` usuncie `InMemoryDataService`
+. Dodajcie odpowiedni URL do backendu.
+. Sprawdźcie czy obsługa REST-ów we frontendzie jest zgodna z tym co przed chwilą napisaliście w `Spring-workshop`.
+. Do klasy `ShipsController` dodajecie adnotacje `@CrossOrigin("http://localhost:4200")`, aby backend mógł przetwarzać żadania z tego adresu.
+
+== Zadanie 6*. Testy dla REST API backendu
+. Używając `MockMvc` napiszcie testy dla metod obsługujących żadania REST-owe.
