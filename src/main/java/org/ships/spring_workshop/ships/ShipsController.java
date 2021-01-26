@@ -11,6 +11,7 @@ import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping(value = "/ships", produces = "application/json")
+@CrossOrigin("http://localhost:4200")
 public class ShipsController {
     ShipService shipService;
 
