@@ -45,10 +45,10 @@ Pojedynczy element __Spring IoC Container__ nazywamy ziarnem (ang. __bean__). Zi
 ==== Podstawowe adnotacje zwiazane ze wstrzykiwaniem zależności
 W Springu możemy tworzyć i wstrzykiwać obiekty posługując się następującymi adnotacjami:
 
-* @Bean - używane na metodach. Tworzy ziarno za pomocą oznaczonej metody.
-* @Autowired - używana na metodach, polach lub konstruktorach. Informuje, że w tym miejscu powinny zostać wstrzyknięte zależności.
-* @Component - używane na klasie. Aby skorzystać z mechanizmu wstrzykiwania, należy oznaczyć klasę która ma korzystać z niego.
-* @Configuration - używane na klasie. Oznacza klasę, która definiuje ziarna.
+* `@Bean` - używane na metodach. Tworzy ziarno za pomocą oznaczonej metody.
+* `@Autowired` - używana na metodach, polach lub konstruktorach. Informuje, że w tym miejscu powinny zostać wstrzyknięte zależności.
+* `@Component` - używane na klasie. Aby skorzystać z mechanizmu wstrzykiwania, należy oznaczyć klasę która ma korzystać z niego.
+* `@Configuration` - używane na klasie. Oznacza klasę, która definiuje ziarna.
 
 [source,java]
 .Stworzenie ziarna poprzez użycie Javy i Springa
@@ -90,7 +90,41 @@ Minusem springa jest skomplikowana konfiguracja do uruchomienia aplikacji. Na ry
 * Oferuje przydatne funkcje takie jak: metryki czy monitor kondycji
 * Zrezygnowanie z konfiguracji oraz generacji kodu z XMLa
 * Posiada przydatne wtyczki związane z bazami danych w pamięci
-* Mniejsza ilość kodu aby osiągnąć tą samą funkcjonalność w Springu
+* Mniejsza ilość kodu aby osiągnąć tą samą funkcjonalność w Springu
+
+Klasa startowa wygląda następująco:
+
+[source,java]
+.Użycie ziarna w kodzie poprzez wstrzykniecie w konstruktor
+----
+package com.ships;
+
+@SpringBootApplication
+class Application {
+
+	public static void main(String[] args) {
+		SpringApplication.run(Application.class, args);
+	}
+}
+----
+
+==== Adnotacja @SpringBootApplication
+
+`@SpringBootApplication` jest połączeniem trzech adnotacji:
+
+* `@EnableAutoConfiguration` - uruchamia automatyczną konfigurację Spring Boot. Oznacza to, że Spring Boot konfiguruje dodane zależności do projektu. Przykładowo jeśli w projekcie znajduje się `HSQLDB`, ale nie ma ręcznie skonfgurowanych ziaren odpowiedzialnych za połączenie do bazy danych, biblioteka zrobi to automatycznie.
+* `@ComponentScan` - skanuje pakiety w poszukiwaniu ziaren.
+* `@Configuration`
+
+==== SpringApplication.run()
+
+Metoda `SpringApplication.run()` przygotowuje program do startu, między innymi:
+
+* Uruchamia autonomiczną aplikację Spring Boot
+* Rejestruje parametry wejściowe aplikacji
+* Buduje instancje kontekstu aplikacji
+* Tworzy instancje ziaren i dodaje je do kontenera
+
 
 
 === Spring MVC
