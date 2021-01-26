@@ -1,0 +1,62 @@
+= Spring MVC
+:source-language: java
+Jest to część framwerku odpowiadająca za tworzenie REST API.
+Za pomocą adnotacji tworzy kontrelery RESTful.
+
+Spring MVC używa programu Tomcat do obsługi żądań HTTP.
+Otrzymane żądania są następnie mapowane do odpowiednich metod Spring MVC.
+
+Spring MVC Używa Jacksona do mapowania obiektów do języka JSON i odwrotnie, jeśli używamy tego formatu do komunikacji.
+Jednak jest on używany niejawnie.
+
+== Ogólne adnotacje
+
+. `@RestController`  - służy do oznaczenia klasy mającej metody do obsługi rządań
+. `@RequestMapping` - adnotacja do oznaczania metod które odpowiadają za obsługę danych żądań np
+
+W przypadku gdy chcemy określić URI wszystkich metod w klasie
+----
+@RestController
+@RequestMapping("/some/path", produces = <format of the output>)
+class SomeController{
+    ...
+}
+----
+Gdy chcemy użyć mapowania na konkrtenj metodzie
+----
+@RequestMapping(value = "/some/path", method = RequestMethod.GET)
+String getMethod(){
+    ...
+}
+----
+== Adnotacje metod mapowanych na żądania REST
+
+`@GetMapping`, `@PostMapping`, `@PutMapping`, `@DeleteMapping` itd. - metody do określania mapowań na żądania REST.
+Równoważne z `@RequestMapping` z parametrem `method`.
+
+* adnotacje te przyjmuję jako argument URI/ścieżkę danego żądania.
+* Jako argumenty metod możemy oznaczyć część URI, jak pokazane poniżej, używając adnotacji `@PathVariable`.
+* Jako argumenty możemy też przyjąć dodatkowe parametry w formacie json przesłane w ciele żądania, oznaczone adnotacją `@RequestBody`.
+----
+@GetMapping("some/path/{argument}")
+ResposneEntity<String> geteMthod(@PathVariable String argument){
+    ...
+}
+
+@PostMapping("some/path")
+ResponseEntity<SomeClass> postMethod(@RequestBody RequestBodyClass reuqestBodyArgument){
+    ...
+}
+----
+Metody mapowane na żądania REST mogą zwracać dowolny obiekt, o ile wszystkie jego pola mają gettery.
+W innym przypadku, Jackson może nie zadziałać poprawnie.
+Tak samo argument oznaczony `@ResponseBody` powinien być typu ze zdefiniowanymi setterami.
+
+== `ResponseEntity`
+
+Jako odpowiedzi żadania możemy zwrócić dowolne obiekty obiekty.
+Jednak wtedy nie jesteśmy w stanie ustawić kodu odpowiedzi HTTP.
+Z pomocą przychodzi klasa `ResponseEntity<T>`. Jako argument `T` przyjmuje ona zwracany typ.
+W konstruktorze tej klasy możemy ustawić odpowiedni nagłówek, zwracany obiekt oraz kod odpowiedzi.
+Klasa ta niejako "opakowuje" zwracany obiekt.
+Najczęściej zwracanym kodem odpowiedzi jest `HttpStatus.OK`.
