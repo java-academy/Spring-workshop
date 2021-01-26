@@ -9,18 +9,30 @@ import java.util.NoSuchElementException;
 
 @Service
 public class ShipService {
+    private static int SHIP_ID_THRESHOLD = 0;
+
     @Getter
-    private List<Ship> shipList = new LinkedList<>();
+    private final List<Ship> shipList = new LinkedList<>();
 
-    void addNewShip(Ship ship) {
-        shipList.add(ship);
-    }
-
-    void removeShipFromList(Ship ship) {
-        if (shipList.contains(ship)) {
-            shipList.remove(ship);
+    Ship addNewShip(String shipName) throws ShipAlreadyAddedException {
+        if (shipList
+                .stream().noneMatch(ship -> ship.hasTheSameName(shipName))) {
+            Ship shipToAdd = new Ship(SHIP_ID_THRESHOLD++, shipName);
+            shipList.add(shipToAdd);
+            return shipToAdd;
         } else {
-            throw new NoSuchElementException("There is no such a ship in ShipService");
+            throw new ShipAlreadyAddedException("There is a ship with this name");
         }
+
     }
+
+    Ship removeShipFromList(String shipName) {
+        Ship shipToRemove = shipList.stream()
+                .filter(ship -> ship.hasTheSameName(shipName))
+                .findAny()
+                .orElseThrow(() -> new NoSuchElementException("There is no ship with such a name"));
+        shipList.remove(shipToRemove);
+        return shipToRemove;
+    }
+
 }

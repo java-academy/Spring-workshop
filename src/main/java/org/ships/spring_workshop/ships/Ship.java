@@ -6,4 +6,8 @@ import lombok.Value;
 public class Ship {
     int id;
     String name;
+
+    boolean hasTheSameName(String name) {
+        return this.name.equals(name);
+    }
 }
